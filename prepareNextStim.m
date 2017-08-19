@@ -41,4 +41,5 @@ coords = [stimParams.ML(locIdxVector)', stimParams.AP(locIdxVector)'];
 laserWaveform = power2Volts(laserPower);
 galvoWaveform = position2Volts(coords);
 
-hw.s.queueData([galvoWaveform, laserWaveform]);
+hw.s.queueOutputData([galvoWaveform, laserWaveform]);
+hw.s.StartBackground;
