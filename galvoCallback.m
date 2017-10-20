@@ -1,10 +1,10 @@
-function galvoCallback(u)
+function galvoCallback(src, event)
 
 persistent hw
 
-ip=u.DatagramAddress;
-port=u.DatagramPort;
-data=fread(u);
+ip=src.DatagramAddress;
+port=src.DatagramPort;
+data=fread(src);
 str=char(data');
 fprintf('Received ''%s'' from %s:%d\n', str, ip, port);
 
@@ -12,30 +12,30 @@ info=parseMessage(str);
 
 % update remote IP to that of the sender (port is standard mpep listening
 % port as initialised in SIListener.m)
-u.RemoteHost = ip;
+src.RemoteHost = ip;
 
 switch info.instruction
     case 'hello'
         % this is just to check communication
-        fwrite(u, data);
+        fwrite(src, data);
     case 'ExpStart'
         hw = prepareHardware;
-        fwrite(u, data);
+        fwrite(src, data);
     case {'ExpEnd', 'ExpInterrupt'}
         hw = releaseHardware(hw);
-        fwrite(u, data);
+        fwrite(src, data);
     case 'StimPrepare'
         prepareNextStim(hw, info.stimParams)
-        fwrite(u, data);
+        fwrite(src, data);
     case 'StimStart'
         startZapping(hw);
-        fwrite(u, data);
+        fwrite(src, data);
     case 'StimStop'
         stopZapping(hw);
-        fwrite(u, data);
+        fwrite(src, data);
     otherwise
         fprintf('Unknown instruction : %s', info.instruction);
-        fwrite(u, data);
+        fwrite(src, data);
 end
 
 end
