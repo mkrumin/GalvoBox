@@ -5,3 +5,7 @@ function startZapping(hw)
 % to the boards to the channel defined to be the trigger
 
 hw.tr.outputSingleScan(1);
+% wait a bit and flip it back to 0
+% otherwise, the next time there will be no rising edge
+pause(0.01);
+hw.tr.outputSingleScan(0);

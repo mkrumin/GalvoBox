@@ -33,3 +33,5 @@ for iPoint = 1:nPoints
     frame = getsnapshot(vid);
     [pos.x(iPoint), pos.y(iPoint)] = findSpot(frame);
 end
+
+p2vTransfrom = getTransform(pos, V);
