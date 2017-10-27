@@ -40,7 +40,7 @@ for iPoint = 1:nPoints
     [pos.x(iPoint), pos.y(iPoint)] = findSpot(frame);
     hSpot.XData = pos.x(iPoint);
     hSpot.YData = pos.y(iPoint);
-    pause(0.5);
+    pause(0.1);
     %     [pos.x(iPoint), pos.y(iPoint)] = findSpot(hAxis);
 end
 
@@ -61,7 +61,7 @@ for iPoint = 1:5
     %     hSpot.MarkerSize = 10;
     %     pause(0.2)
     vxy = [x y 1]*px2vTransform;
-    hw.s.outputSingleScan([vxy, vLaser])
+    hw.s.outputSingleScan([vxy(1:2), vLaser])
     pause(0.5); % wait until the galvos actually move (might be unnecessary)
 end
 
@@ -70,7 +70,7 @@ hw.s.outputSingleScan([5 5 0]);
 
 %% alignment to bregma-lambda axis
 
-pause(0.5);
+pause(0.2);
 frame = getsnapshot(vid);
 h = figure;
 imagesc(frame);
@@ -88,23 +88,23 @@ mm2pxTransform = alignToStereo(bregma, lambda, right, mm2px);
 
 pxRightPPC = [1.7, -2, 1] * mm2pxTransform;
 pxLeftPPC = [-1.7, -2, 1] * mm2pxTransform;
-vXY_RightPPC = [pxRightPPC, 1] * px2vTransform;
-vXY_LeftPPC = [pxLeftPPC, 1] * px2vTransform;
+vXY_RightPPC = pxRightPPC * px2vTransform;
+vXY_LeftPPC = pxLeftPPC * px2vTransform;
 x = [bregma.x, lambda.x];
 y = [bregma.y, lambda.y];
 hSpot.XData = x;
 hSpot.YData = y;
 hSpot.Marker = 'o';
 
-[xx , yy] = meshgrid(-3:0.5:3, -5:0.5:1);
+[xx , yy] = meshgrid(-4:4, -5:1);
 coords = [xx(:), yy(:), ones(size(xx(:)))];
 pxGrid = coords * mm2pxTransform;
 plot(hAxis, pxGrid(:,1), pxGrid(:, 2), 'c.');
 
 plot(hAxis, pxRightPPC(1), pxRightPPC(2), 'rx', pxLeftPPC(1), pxLeftPPC(2), 'cx');
-hw.s.outputSingleScan([vXY_RightPPC, vLaser])
+hw.s.outputSingleScan([vXY_RightPPC(1:2), vLaser])
 pause(3); % wait until the galvos actually move (might be unnecessary)
-hw.s.outputSingleScan([vXY_LeftPPC, vLaser])
+hw.s.outputSingleScan([vXY_LeftPPC(1:2), vLaser])
 pause(3); % wait until the galvos actually move (might be unnecessary)
 hw.s.outputSingleScan([5 5 0]);
 

@@ -7,10 +7,11 @@ function tf = alignToStereo(br, lam, rh, pxPerMm)
 % rh - coordinates of a location on the right hemisphere in pixels
 % pxPerMm - scaling of camera pixels to real world mm
 
-% tf - a 3-by-2 matrix, [mmX, mmY, 1]*tf = [pxX, pxY]
+% tf - a 3-by-3 matrix, [mmX, mmY, 1]*tf = [pxX, pxY, 1]
+% the third column is [0 0 1]'
 
 % Derivation of the solution:
-% tf = [a b; c d; e f]
+% tf = [a b 0; c d 0; e f 1]
 % Use bregma coordinates: [0 0 1]*tf=[br.x br.y] ==> [e f]=[br.x br.y]
 % Use lambda coordinates: [0 y 1]*tf=[lam.x lam.y] ==> 
 %       ==>[y*c+e y*d+f]=[lam.x lam.y]
@@ -53,10 +54,11 @@ d = d * sign(f - lam.y);
 c=d*(lam.x - e)/(lam.y - f);
 b = pxPerMm/sqrt(((lam.y-f)^2/(lam.x-e)^2+1));
 a = -b*(lam.y-f)/(lam.x-e);
-z1=(rh.x-lam.x)*(f-lam.y)-(rh.y-lam.y)*(e-lam.x)
-z2=(a+e-lam.x)*(f-lam.y)-(b+f-lam.y)*(e-lam.x)
+z1=(rh.x-lam.x)*(f-lam.y)-(rh.y-lam.y)*(e-lam.x);
+z2=(a+e-lam.x)*(f-lam.y)-(b+f-lam.y)*(e-lam.x);
 if sign(z1)~=sign(z2)
     a = -a;
     b = -b;
 end
-tf = [a b; c d; e f];
+
+tf = [a b 0; c d 0; e f 1];
