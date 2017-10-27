@@ -20,8 +20,11 @@ s.Rate = sampleRate;
 
 s.addTriggerConnection('external', 'Dev1/PFI0', 'StartTrigger');
 s.addTriggerConnection('external', 'Dev2/PFI0', 'StartTrigger');
-s.addClockConnection('Dev2/PFI1', 'Dev1/PFI1', 'ScanClock');
+% clock connection is probably unnecessary for short duration outputs we
+% will typically have
+% s.addClockConnection('Dev2/PFI1', 'Dev1/PFI1', 'ScanClock');
 
+s.ExternalTriggerTimeout = Inf;
 
 tr = daq.createSession('ni');
 tr.addDigitalChannel('Dev2', 'Port0/Line0', 'OutputOnly');
