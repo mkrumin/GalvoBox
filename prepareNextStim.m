@@ -5,12 +5,12 @@ function prepareNextStim(hw, stimParams)
 % the session will then be waiting for a trigger to start
 
 %% for debugging
-stimParams.nPoints = 2;
-stimParams.stimDuration = 0.1;
-stimParams.ML = [-1.7 1.7 2.5];
-stimParams.AP = [-2 -2.1 -3.5];
-stimParams.stimPower = [0.8 1 0.5];
-hw.s.sampleRate = 20e3;
+% stimParams.nPoints = 2;
+% stimParams.stimDuration = 0.1;
+% stimParams.ML = [-1.7 1.7 2.5];
+% stimParams.AP = [-2 -2.1 -3.5];
+% stimParams.stimPower = [0.8 1 0.5];
+% hw.s.Rate = 20e3;
 
 %%
 f = 40; % [Hz] basic frequency of stimulation, each point will be visited f times per second
@@ -18,7 +18,7 @@ flightTime = 1e-3; % [sec] Time that takes galvo mirrors to hop from one point t
 % During this time the laser should be shut down
 
 % define the time axis of the stimulus
-dt = 1/hw.s.sampleRate;
+dt = 1/hw.s.Rate;
 t = dt:dt:stimParams.stimDuration;
 t = t(:);
 
@@ -42,4 +42,4 @@ laserWaveform = power2Volts(laserPower);
 galvoWaveform = position2Volts(coords);
 
 hw.s.queueOutputData([galvoWaveform, laserWaveform]);
-hw.s.StartBackground;
+hw.s.startBackground;

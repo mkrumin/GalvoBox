@@ -2,39 +2,59 @@ function galvoCallback(src, event)
 
 persistent hw
 
+timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
 ip=src.DatagramAddress;
 port=src.DatagramPort;
 data=fread(src);
 str=char(data');
-fprintf('Received ''%s'' from %s:%d\n', str, ip, port);
+fprintf('[galvoUDP] [%s] Received ''%s'' from %s:%d\n', timeStamp, str, ip, port);
 
 info=parseMessage(str);
 
-% update remote IP to that of the sender (port is standard mpep listening
-% port as initialised in SIListener.m)
+% update remote IP to that of the sender
 src.RemoteHost = ip;
+src.RemotePort = port;
 
 switch info.instruction
     case 'hello'
         % this is just to check communication
+        timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+        fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case 'ExpStart'
-        hw = prepareHardware;
+        try
+            hw = prepareHardware;
+        catch e
+            fprintf('\nHardware initialization failed with the following message:\n');
+            fprintf('%s\n', e.message);
+        end
+        timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+        fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case {'ExpEnd', 'ExpInterrupt'}
-        hw = releaseHardware(hw);
+        releaseHardware(hw);
+        timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+        fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case 'StimPrepare'
         prepareNextStim(hw, info.stimParams)
+        timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+        fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case 'StimStart'
         startZapping(hw);
+        timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+        fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case 'StimStop'
         stopZapping(hw);
+        timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+        fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     otherwise
-        fprintf('Unknown instruction : %s', info.instruction);
+        fprintf('Unknown instruction : %s\n', info.instruction);
+        timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+        fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
 end
 

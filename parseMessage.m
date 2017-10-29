@@ -13,7 +13,7 @@ function out = parseMessage(str)
 
 
 %% for debugging
-% str = 'StimPrepare MK027 45 2 1.7 -2 1 -1.7 -2 1';
+% str = 'StimPrepare 2017-10-28_1256_MK027 45 2 1.7 -2 1 -1.7 -2 1';
 
 %%
 C = textscan(str, '%s');

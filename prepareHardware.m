@@ -2,6 +2,8 @@ function hw = prepareHardware
 
 % This function will prepare the NI boards
 
+fprintf('Initializing the NI hardware..');
+
 adaptorVendor = 'ni';
 galvoDeviceID = 'Dev2';
 xChID = 'ao0';
@@ -34,3 +36,5 @@ tr.outputSingleScan(0);
 hw.s = s;
 % this is the daq session of the trigger
 hw.tr = tr;
+
+fprintf('.done\n');
