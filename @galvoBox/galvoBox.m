@@ -1,6 +1,10 @@
 classdef galvoBox < handle
     properties
         hw
+        vid
+        hPreview
+        previewAxis
+        mm2pxScaling 
         px2vTf
         mm2pxTf
         cameraFOV
@@ -14,7 +18,7 @@ classdef galvoBox < handle
             obj.mm2pxTf = eye(3);
             obj.cameraFOV = 8; % [mm]
             obj.laserLUT = loadLaserLUT;
-            obj.galvoUDP = startGalvoListener;
+            obj.galvoUDP = startGalvoListener(obj);
             obj.testUDP = startTestUDP;
         end
     end

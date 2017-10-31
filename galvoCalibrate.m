@@ -1,4 +1,4 @@
-function p2vTransform = galvoCalibrate
+function galvoCalibrate(obj)
 
 % This function will make the voltage-to-position calibration of the system
 

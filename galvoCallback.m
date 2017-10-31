@@ -1,6 +1,4 @@
-function galvoCallback(src, event)
-
-persistent hw
+function galvoCallback(src, event, obj)
 
 timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
 ip=src.DatagramAddress;
@@ -23,7 +21,7 @@ switch info.instruction
         fwrite(src, data);
     case 'ExpStart'
         try
-            hw = prepareHardware;
+            obj.hw = prepareHardware;
         catch e
             fprintf('\nHardware initialization failed with the following message:\n');
             fprintf('%s\n', e.message);
@@ -32,22 +30,22 @@ switch info.instruction
         fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case {'ExpEnd', 'ExpInterrupt'}
-        releaseHardware(hw);
+        releaseHardware(obj.hw);
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case 'StimPrepare'
-        prepareNextStim(hw, info.stimParams)
+        prepareNextStim(obj.hw, info.stimParams)
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case 'StimStart'
-        startZapping(hw);
+        startZapping(obj.hw);
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
     case 'StimStop'
-        stopZapping(hw);
+        stopZapping(obj.hw);
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s'' to %s:%d\n', timeStamp, str, ip, port);
         fwrite(src, data);
