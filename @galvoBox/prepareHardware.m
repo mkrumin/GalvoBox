@@ -1,4 +1,4 @@
-function hw = prepareHardware
+function prepareHardware(obj)
 
 % This function will prepare the NI boards
 
@@ -33,8 +33,8 @@ tr.addDigitalChannel('Dev2', 'Port0/Line0', 'OutputOnly');
 tr.outputSingleScan(0);
 
 % this is the daq session for the galvos and the laser
-hw.s = s;
+obj.hw.s = s;
 % this is the daq session of the trigger
-hw.tr = tr;
+obj.hw.tr = tr;
 
 fprintf('.done\n');

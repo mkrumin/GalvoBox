@@ -1,5 +1,5 @@
-function testUDP = startTestUDP
+function startTestUDP(obj)
 
-testUDP = udp('ZCAMP3', 1002, 'LocalPort', 1103);
-set(testUDP, 'DatagramReceivedFcn', @testUDPCallback);
-fopen(testUDP);
+obj.testUDP = udp('ZCAMP3', 1002, 'LocalPort', 1103);
+set(obj.testUDP, 'DatagramReceivedFcn', @testUDPCallback);
+fopen(obj.testUDP);
