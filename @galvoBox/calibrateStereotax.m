@@ -26,16 +26,6 @@ obj.mm2pxTf = alignToStereo(bregma, lambda, right, obj.mm2pxScaling);
 % hSpot.YData = y;
 % hSpot.Marker = 'o';
 % 
-% [xx , yy] = meshgrid(-4:4, -5:1);
-% coords = [xx(:), yy(:), ones(size(xx(:)))];
-% pxGrid = coords * mm2pxTransform;
-% plot(hAxis, pxGrid(:,1), pxGrid(:, 2), 'c.');
-% 
-% plot(hAxis, pxRightPPC(1), pxRightPPC(2), 'rx', pxLeftPPC(1), pxLeftPPC(2), 'cx');
-% obj.gotoV([vXY_RightPPC(1:2), vLaser])
-% pause(3); % wait until the galvos actually move (might be unnecessary)
-% obj.gotoV([vXY_LeftPPC(1:2), vLaser])
-% pause(3); % wait until the galvos actually move (might be unnecessary)
 
 obj.parkGalvos;
 

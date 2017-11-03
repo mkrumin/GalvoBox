@@ -32,6 +32,7 @@ obj.px2vTf = getTransform(pos, V);
 galvoZero = [0 0 1] *inv(obj.px2vTf);
 obj.hSpots.XData = galvoZero(1);
 obj.hSpots.YData = galvoZero(2);
+obj.hSpots.Marker = 'x';
 
 % park the mirrors, switch off the laser
 obj.parkGalvos;

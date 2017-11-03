@@ -5,6 +5,7 @@ classdef galvoBox < handle
         hPreview
         hCameraAxis
         hSpots
+        hGrid
         mm2pxScaling 
         px2vTf
         mm2pxTf
