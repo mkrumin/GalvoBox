@@ -16,13 +16,13 @@ nPoints = numel(V.x);
 preview(obj.vid);
 for iPoint = 1:nPoints
     obj.gotoV([V.x(iPoint) V.y(iPoint) vLaser])
-    pause(0.2); % wait until the galvos actually move (might be unnecessary)
+    pause(0.5); % wait until the galvos actually move (might be unnecessary)
     frame = getsnapshot(obj.vid);
     [pos.x(iPoint), pos.y(iPoint)] = findSpot(frame);
     obj.hSpots.XData = pos.x(iPoint);
     obj.hSpots.YData = pos.y(iPoint);
     obj.hSpots.Marker = 'o';
-    pause(0.1);
+    pause(0.5);
     %     [pos.x(iPoint), pos.y(iPoint)] = findSpot(hAxis);
 end
 

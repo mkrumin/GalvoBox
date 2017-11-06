@@ -1,4 +1,4 @@
-function prepareNextStim(hw, stimParams)
+function prepareNextStim(obj, info)
 
 % This function will precompute the waveforms for the mirrors and the
 % laser, load them on the boards and arm the DAQ session
@@ -18,28 +18,40 @@ flightTime = 1e-3; % [sec] Time that takes galvo mirrors to hop from one point t
 % During this time the laser should be shut down
 
 % define the time axis of the stimulus
-dt = 1/hw.s.Rate;
-t = dt:dt:stimParams.stimDuration;
+dt = 1/obj.hw.s.Rate;
+t = dt:dt:info.maxDuration;
 t = t(:);
 
 cycleDuration = 1/f;
-locationDuration = cycleDuration/stimParams.nPoints;
+nPoints = length(info.power);
+locationDuration = cycleDuration/nPoints;
 
-locIdxVector = mod(ceil(t/locationDuration)-1, stimParams.nPoints)+1;
+locIdxVector = mod(ceil(t/locationDuration)-1, nPoints)+1;
 
 fSine = 1/(locationDuration-flightTime);
 tCycle = mod(t, locationDuration);
 laserPower = (-cos(2*pi*fSine*(tCycle-flightTime))+1)/2.*...
     (tCycle>=flightTime).*(tCycle<=locationDuration);
-laserPowerMultiplier = stimParams.stimPower(locIdxVector)';
+laserPowerMultiplier = info.power(locIdxVector)';
 laserPower = laserPower.*laserPowerMultiplier;
 
-coords = [stimParams.ML(locIdxVector)', stimParams.AP(locIdxVector)'];
+coords = [info.ML(locIdxVector)', info.AP(locIdxVector)', ones(numel(locIdxVector), 1)];
 
 % plot(t, laserPower, t, locIdxVector/3, t, coords)
 
-laserWaveform = power2Volts(laserPower);
-galvoWaveform = position2Volts(coords);
+laserWaveform = obj.laserVoltage(laserPower);
+galvoWaveform = coords * obj.mm2pxTf * obj.px2vTf;
+galvoWaveform = galvoWaveform(:, 1:2);
 
-hw.s.queueOutputData([galvoWaveform, laserWaveform]);
-hw.s.startBackground;
+stop(obj.hw.s);
+wait(obj.hw.s);
+obj.hw.s.queueOutputData([galvoWaveform, laserWaveform; obj.parkingState]);
+obj.hw.s.startBackground;
+
+% show crosses where the stimulation will occur
+
+targets = [info.ML', info.AP', ones(nPoints, 1)] * obj.mm2pxTf;
+obj.hSpots.XData = targets(:, 1);
+obj.hSpots.YData = targets(:, 2);
+obj.hSpots.Marker = 'x';
+

@@ -1,6 +1,7 @@
 classdef galvoBox < handle
     properties
         hw
+        parkingState
         vid
         hPreview
         hCameraAxis
@@ -28,6 +29,7 @@ classdef galvoBox < handle
             obj.startGalvoListener;
             obj.startTestUDP;
             obj.prepareHardware;
+            obj.parkingState = [6 6 0];
             obj.openCamera;
             obj.cleanup = onCleanup({@delete, obj});
         end

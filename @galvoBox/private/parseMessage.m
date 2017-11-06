@@ -16,6 +16,12 @@ function out = parseMessage(str)
 % str = 'StimPrepare 2017-10-28_1256_MK027 45 2 1.7 -2 1 -1.7 -2 1';
 
 %%
+
+data = loadjson(str);
+out = data.msg;
+
+return;
+%%
 C = textscan(str, '%s');
 C = C{1};
 
