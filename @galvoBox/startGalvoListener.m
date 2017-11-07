@@ -5,5 +5,3 @@ function startGalvoListener(obj)
 obj.galvoUDP = udp('ZCAMP3', 1103, 'LocalPort', 1002);
 set(obj.galvoUDP, 'DatagramReceivedFcn', {@galvoCallback, obj});
 fopen(obj.galvoUDP);
-
-% galvoCalibrate;

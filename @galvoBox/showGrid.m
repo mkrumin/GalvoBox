@@ -13,7 +13,7 @@ gridY = reshape(pxGrid(:,2), size(yy));
 
 % plotting the mm grid, and marking the bregma location
 % obj.hGrid = plot(obj.hCameraAxis, gridX, gridY, 'c--', gridX', gridY', 'c--', pxBregma(1), pxBregma(2), 'ro');
-obj.hGrid = plot(obj.hCameraAxis, gridX, gridY, 'co', 'MarkerSize', 4)
+obj.hGrid = plot(obj.hCameraAxis, gridX, gridY, 'co', 'MarkerSize', 4);
 hTmp = plot(pxBregma(1), pxBregma(2), 'ro', 'MarkerSize', 8);
 obj.hGrid = [obj.hGrid; hTmp];
 

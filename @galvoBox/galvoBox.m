@@ -1,5 +1,6 @@
 classdef galvoBox < handle
     properties
+        ExpRef
         hw
         parkingState
         vid

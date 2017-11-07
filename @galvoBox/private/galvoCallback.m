@@ -32,6 +32,7 @@ switch info.instruction
             fprintf('\nHardware initialization failed with the following message:\n');
             fprintf('%s\n', e.message);
         end
+        obj.ExpRef = info.ExpRef;
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s ...'' to %s:%d\n', timeStamp, info.instruction, ip, port);
         fwrite(src, data);
