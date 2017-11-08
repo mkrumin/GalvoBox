@@ -29,3 +29,4 @@ obj.UDPLog = struct('timestamp', [], 'msg', '');
 obj.nUDPs = 0;
 obj.cameraLog = struct('timestamp', [], 'cameraFrame', []);
 obj.nCameraFrames = 0;
+obj.ExpRef = '';

@@ -31,10 +31,12 @@ fSine = 1/(locationDuration-flightTime);
 tCycle = mod(t, locationDuration);
 laserPower = (-cos(2*pi*fSine*(tCycle-flightTime))+1)/2.*...
     (tCycle>=flightTime).*(tCycle<=locationDuration);
-laserPowerMultiplier = info.power(locIdxVector)';
-laserPower = laserPower.*laserPowerMultiplier;
+laserPowerMultiplier = info.power(locIdxVector);
+laserPower = laserPower.*laserPowerMultiplier(:);
 
-coords = [info.ML(locIdxVector)', info.AP(locIdxVector)', ones(numel(locIdxVector), 1)];
+coordsML = info.ML(locIdxVector); 
+coordsAP = info.AP(locIdxVector); 
+coords = [coordsML(:), coordsAP(:), ones(numel(locIdxVector), 1)];
 
 % plot(t, laserPower, t, locIdxVector/3, t, coords)
 

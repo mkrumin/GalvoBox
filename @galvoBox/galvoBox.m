@@ -29,11 +29,11 @@ classdef galvoBox < handle
         function obj = galvoBox()
             obj.px2vTf = eye(3);
             obj.mm2pxTf = eye(3);
-            obj.cameraFOV = 8; % [mm]
+            obj.cameraFOV = 7.5; % [mm]
             obj.laserLUT = loadLaserLUT;
-            obj.UDPLog = struct('timestamp', [], 'msg', '');
+            obj.UDPLog = struct('timeStamp', [], 'msg', '');
             obj.nUDPs = 0;
-            obj.cameraLog = struct('timestamp', [], 'cameraFrame', []);
+            obj.cameraLog = struct('timeStamp', [], 'cameraFrame', []);
             obj.nCameraFrames = 0;
             obj.startGalvoListener;
             obj.startTestUDP;

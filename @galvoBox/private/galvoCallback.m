@@ -1,7 +1,7 @@
 function galvoCallback(src, event, obj)
 
 t = clock;
-obj.nUDPs = obj.nUDPS + 1;
+obj.nUDPs = obj.nUDPs + 1;
 timeStamp = datestr(t, 'yyyy-mm-dd HH:MM:SS.FFF');
 ip=src.DatagramAddress;
 port=src.DatagramPort;
