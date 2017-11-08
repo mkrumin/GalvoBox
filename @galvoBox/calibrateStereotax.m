@@ -4,7 +4,7 @@ pause(0.2)
 frame = getsnapshot(obj.vid);
 h = figure;
 imagesc(frame);
-colormap jet;
+colormap bone;
 axis equal tight;
 set(gca, 'XDir', 'reverse');
 title('Click on Bregma');
