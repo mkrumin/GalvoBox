@@ -25,8 +25,8 @@ save(fullfile(folder, filenameData), 'zap');
 save(fullfile(folder, filenameObj), 'obj');
 
 % clean the logs befor the next possible experiment
-obj.UDPLog = struct('timestamp', [], 'msg', '');
+obj.UDPLog = struct('timeStamp', [], 'msg', '');
 obj.nUDPs = 0;
-obj.cameraLog = struct('timestamp', [], 'cameraFrame', []);
+obj.cameraLog = struct('timeStamp', [], 'iTrial', [], 'cameraFrame', []);
 obj.nCameraFrames = 0;
 obj.ExpRef = '';

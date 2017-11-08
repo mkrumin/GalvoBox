@@ -1,6 +1,7 @@
 classdef galvoBox < handle
     properties
         ExpRef
+        iTrial
         hw
         parkingState
         vid
@@ -27,13 +28,15 @@ classdef galvoBox < handle
     
     methods
         function obj = galvoBox()
+            obj.ExpRef = '';
+            obj.iTrial = 0;
             obj.px2vTf = eye(3);
             obj.mm2pxTf = eye(3);
             obj.cameraFOV = 7.5; % [mm]
             obj.laserLUT = loadLaserLUT;
             obj.UDPLog = struct('timeStamp', [], 'msg', '');
             obj.nUDPs = 0;
-            obj.cameraLog = struct('timeStamp', [], 'cameraFrame', []);
+            obj.cameraLog = struct('timeStamp', [], 'iTrial', [], 'cameraFrame', []);
             obj.nCameraFrames = 0;
             obj.startGalvoListener;
             obj.startTestUDP;

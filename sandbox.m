@@ -2,7 +2,7 @@
 
 o = galvoBox;
 
-%%
+
 o.calibrateGalvos;
 o.calibrateStereotax;
 

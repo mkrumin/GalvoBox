@@ -38,6 +38,7 @@ switch info.instruction
         fprintf('[galvoUDP] [%s] Sending ''%s ...'' to %s:%d\n', timeStamp, info.instruction, ip, port);
         fwrite(src, data);
     case 'ZapPrepare'
+        obj.iTrial = info.iTrial;
         obj.prepareNextStim(info)
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s ...'' to %s:%d\n', timeStamp, info.instruction, ip, port);
