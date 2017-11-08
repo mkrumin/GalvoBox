@@ -5,11 +5,10 @@ function prepareNextStim(obj, info)
 % the session will then be waiting for a trigger to start
 
 %% for debugging
-% stimParams.nPoints = 2;
-% stimParams.stimDuration = 0.1;
-% stimParams.ML = [-1.7 1.7 2.5];
-% stimParams.AP = [-2 -2.1 -3.5];
-% stimParams.stimPower = [0.8 1 0.5];
+% info.maxDuration = 0.1;
+% info.ML = [-1.7 1.7 2.5];
+% info.AP = [-2 -2.1 -3.5];
+% info.power = [0.8 1 0.5];
 % hw.s.Rate = 20e3;
 
 %%

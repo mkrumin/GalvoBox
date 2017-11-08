@@ -15,6 +15,10 @@ classdef galvoBox < handle
         laserLUT
         galvoUDP
         testUDP
+        UDPLog
+        nUDPs
+        cameraLog
+        nCameraFrames
     end
     
     properties (Access = 'private')
@@ -27,6 +31,10 @@ classdef galvoBox < handle
             obj.mm2pxTf = eye(3);
             obj.cameraFOV = 8; % [mm]
             obj.laserLUT = loadLaserLUT;
+            obj.UDPLog = struct('timestamp', [], 'msg', '');
+            obj.nUDPs = 0;
+            obj.cameraLog = struct('timestamp', [], 'cameraFrame', []);
+            obj.nCameraFrames = 0;
             obj.startGalvoListener;
             obj.startTestUDP;
             obj.prepareHardware;

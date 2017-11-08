@@ -1,10 +1,14 @@
 function galvoCallback(src, event, obj)
 
-timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
+t = clock;
+obj.nUDPs = obj.nUDPS + 1;
+timeStamp = datestr(t, 'yyyy-mm-dd HH:MM:SS.FFF');
 ip=src.DatagramAddress;
 port=src.DatagramPort;
 data=fread(src);
 str=char(data');
+obj.UDPLog(obj.nUDPs).timeStamp = datenum(t);
+obj.UDPLog(obj.nUDPs).msg = str;
 fprintf('[galvoUDP] [%s] Received \n%sfrom %s:%d\n', timeStamp, str, ip, port);
 
 try
@@ -24,19 +28,12 @@ switch info.instruction
         fprintf('[galvoUDP] [%s] Sending ''%s ...'' to %s:%d\n', timeStamp, info.instruction, ip, port);
         fwrite(src, data);
     case 'ExpStart'
-        try
-            if ~isvalid(obj.hw.s)
-                obj.prepareHardware;
-            end
-        catch e
-            fprintf('\nHardware initialization failed with the following message:\n');
-            fprintf('%s\n', e.message);
-        end
-        obj.ExpRef = info.ExpRef;
+        obj.startExperiment(info.ExpRef);
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s ...'' to %s:%d\n', timeStamp, info.instruction, ip, port);
         fwrite(src, data);
     case {'ExpEnd', 'ExpInterrupt'}
+        obj.stopExperiment;
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s ...'' to %s:%d\n', timeStamp, info.instruction, ip, port);
         fwrite(src, data);
@@ -47,6 +44,8 @@ switch info.instruction
         fwrite(src, data);
     case 'ZapStart'
         obj.startZapping;
+        pause(0.1);
+        obj.logCameraFrame;
         timeStamp = datestr(clock, 'yyyy-mm-dd HH:MM:SS.FFF');
         fprintf('[galvoUDP] [%s] Sending ''%s ...'' to %s:%d\n', timeStamp, info.instruction, ip, port);
         fwrite(src, data);
