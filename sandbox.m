@@ -1,12 +1,11 @@
 % the script to test galvo inactivation rig functionality
 
 o = galvoBox;
-
-
 o.calibrateGalvos;
+%%
 o.calibrateStereotax;
-
 o.showGrid;
+%%
 o.hideGrid;
 %%
 msg.instruction = 'ExpStart'; % one of {'hello', 'ExpStart', 'ExpEnd', 'ExpInterrupt'...

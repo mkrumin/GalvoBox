@@ -22,6 +22,7 @@ if ~exist(folder, 'dir')
     mkdir(folder);
 end
 save(fullfile(folder, filenameData), 'zap');
+warning('off', 'MATLAB:Figure:FigureSavedToMATFile');
 save(fullfile(folder, filenameObj), 'obj');
 
 % clean the logs befor the next possible experiment
