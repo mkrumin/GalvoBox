@@ -7,6 +7,7 @@ o.calibrateGalvos;
 o.calibrateStereotax;
 
 o.showGrid;
+o.hideGrid;
 %%
 msg.instruction = 'ExpStart'; % one of {'hello', 'ExpStart', 'ExpEnd', 'ExpInterrupt'...
 msg.ExpRef = '2017-11-11_1_default';
