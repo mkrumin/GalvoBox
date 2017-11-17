@@ -23,6 +23,7 @@ if ~exist(folder, 'dir')
 end
 save(fullfile(folder, filenameData), 'zap');
 warning('off', 'MATLAB:Figure:FigureSavedToMATFile');
+warning('off', 'MATLAB:serial:instrcb:invalidcallback');
 save(fullfile(folder, filenameObj), 'obj');
 
 % clean the logs befor the next possible experiment

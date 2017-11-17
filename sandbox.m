@@ -1,6 +1,7 @@
 % the script to test galvo inactivation rig functionality
 
 o = galvoBox;
+%%
 o.calibrateGalvos;
 %%
 o.calibrateStereotax;
