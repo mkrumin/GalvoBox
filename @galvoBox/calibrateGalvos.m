@@ -5,7 +5,7 @@ function calibrateGalvos(obj)
 obj.parkGalvos;
 
 power = 1; % [mW]
-vLaser  = laserVoltage(obj, power); % 1mW
+vLaser  = laserVoltage(obj, [0 0], power); % 1mW
 vRangeX = -1:1;
 vRangeY = -1:1;
 [V.x, V.y] = meshgrid(vRangeX, vRangeY);

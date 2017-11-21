@@ -1,155 +1,155 @@
 % Laser Diode calibration script
 % Michael Krumin
 
+%% setting up the DAQ session
 % daq.getDevices
 s = daq.createSession('ni');
-LDCurrentMonitor = s.addAnalogInputChannel('Dev1', 'ai5', 'Voltage');
-Photodiode = s.addAnalogInputChannel('Dev1', 'ai6', 'Voltage');
-LDCurrentMonitor.TerminalConfig = 'SingleEnded';
+
+Photodiode = s.addAnalogInputChannel('Dev2', 'ai0', 'Voltage');
 Photodiode.TerminalConfig = 'SingleEnded';
-LDControlSignal = s.addAnalogOutputChannel('Dev1', 'ao1', 'Voltage');
+% LDCurrentMonitor = s.addAnalogInputChannel('Dev1', 'ai5', 'Voltage');
+% LDCurrentMonitor.TerminalConfig = 'SingleEnded';
+Galvo = s.addAnalogOutputChannel('Dev2', {'ao0', 'ao1'}, 'Voltage');
+LDControlSignal = s.addAnalogOutputChannel('Dev1', 'ao0', 'Voltage');
 
-s.Rate = 100e3;
-LDCurrentConversion = -50; % [mA/V]
-% slow calibration
-vMin = -3;
-vMax = 2;
+s.Rate = 5e3;
+% LDCurrentConversion = -50; % [mA/V]
 
-singleSwipeDur = 10;
-nSamplesSwipe = singleSwipeDur*s.Rate;
-waitDur = 10;
-nSamplesWait = waitDur*s.Rate;
-singleSwipeUp = linspace(vMin, vMax, nSamplesSwipe);
-singleSwipeDown = linspace(vMax, vMin, nSamplesSwipe);
+s.addTriggerConnection('external', 'Dev1/PFI0', 'StartTrigger');
+s.addTriggerConnection('external', 'Dev2/PFI0', 'StartTrigger');
+s.ExternalTriggerTimeout = Inf;
 
-singleCycle = [ones(nSamplesWait, 1) * vMax;...
-    singleSwipeDown(:);...
-    ones(nSamplesWait, 1) * vMin;...
-    singleSwipeUp(:)];
+s.addlistener('DataAvailable', @logData);
 
-nCycles = 5;
-figure;
-for iCycle = 1:nCycles
+tr = daq.createSession('ni');
+tr.addDigitalChannel('Dev2', 'Port0/Line0', 'OutputOnly');
 
-s.outputSingleScan(vMax);
-pause(waitDur);
-s.queueOutputData(singleSwipeDown(:));
+
+%% laser voltage to power calibration
+laserVMin = 0;
+laserVMax = 4;
+laserVforXY = 4;
+
+singleStepDur = 0.5;
+nRepeats = 5;
+nSamplesStep = singleStepDur*s.Rate;
+laserV = repmat(laserVMin:0.05:laserVMax, 1, nRepeats);
+laserV = laserV(randperm(length(laserV)));
+laserWaveform = repmat(laserV, nSamplesStep, 1);
+laserWaveform = laserWaveform(:);
+galvoWaveform = zeros(length(laserWaveform), 2);
+
+tr.outputSingleScan(0);
+
+%%
+% pre-heat the laser
+fprintf('Pre-heating the laser\n');
+s.outputSingleScan([0 0 laserVMax]);
+pause(10);
+
+%%
+s.queueOutputData([galvoWaveform, laserWaveform]);
+s.NotifyWhenDataAvailableExceeds = length(laserWaveform);
 % s.prepare;
-dataDown{iCycle} = s.startForeground;
+s.startBackground;
 
-plot(singleSwipeDown, dataDown{iCycle}(:,2));
+pause(1);
+
+fprintf('[%s], will run for %2.0f seconds\n', datestr(now), length(laserWaveform)/s.Rate);
+tr.outputSingleScan(1);
+pause(0.01);
+tr.outputSingleScan(0);
+
+wait(s);
+fprintf('[%s], stopped running\n', datestr(now));
+s.outputSingleScan([0 0 0]);
+
+%% plotting
+global t phd
+figure
+plot(t, phd, 'b', t, laserWaveform, 'r');
 hold on;
+
+power = reshape(phd, nSamplesStep, []);
+power = power(nSamplesStep/2:end-10, :);
+power = mean(power);
+[laserVSorted, ind] = sort(laserV, 'ascend');
+laserVSorted = laserVSorted(1:nRepeats:end);
+power = mean(reshape(power(ind), nRepeats, []));
+power = power - min(power);
+
+if any(diff(power)<0)
+    warning('Calibration data not monotonic');
+end
+
+figure;
+plot(laserVSorted, power, 'o');
 xlabel('Control Voltage [V]');
 ylabel('Photodiode [a.u.]');
 
-% s.outputSingleScan(vMin);
-% pause(waitDur);
-% 
-% s.queueOutputData(singleSwipeUp(:));
+return
+
+%% Calibrating position tuning of the laser power
+x = -2:0.2:2;
+y = -2:0.2:2;
+nRepeats = 5;
+[XX, YY] = meshgrid(x, y);
+[ny, nx] = size(XX);
+
+timePerLoc = 0.1;
+nSamplesPerLoc = timePerLoc * s.Rate;
+vX = repmat(XX(:)', nSamplesPerLoc, 1);
+vY = repmat(YY(:)', nSamplesPerLoc, 1);
+vX = vX(:);
+vY = vY(:);
+vX = repmat(vX, nRepeats, 1);
+vY = repmat(vY, nRepeats, 1);
+vLas = laserVMax*ones(size(vX));
+
+%%
+fprintf('Pre-heating the laser\n');
+s.outputSingleScan([0 0 laserVMax]);
+pause(10);
+
+s.queueOutputData([vX, vY, vLas]);
+s.NotifyWhenDataAvailableExceeds = length(vX);
 % s.prepare;
-% dataUp{iCycle} = s.startForeground;
-% 
-% plot(singleSwipeUp, dataUp{iCycle}(:,2));
-% hold on;
-% xlabel('Control Voltage [V]');
-% ylabel('Photodiode [a.u.]');
+s.startBackground;
 
-end
+pause(1);
 
-%%
+fprintf('Calibrating position-dependent laser power\n');
+fprintf('[%s], will run for %2.0f seconds\n', datestr(now), length(vX)/s.Rate);
+tr.outputSingleScan(1);
+pause(0.01);
+tr.outputSingleScan(0);
 
-N = round(s.Rate*0.03);
-phData = cell2mat(dataDown);
-phData = flipud(phData);
-V = flipud(singleSwipeDown(:));
-phData = mean(phData(:,2:2:end), 2);
-phBias = mean(phData(V<(min(V)+0.1)));
-phData = phData - phBias;
+wait(s);
+fprintf('[%s], stopped running\n', datestr(now));
+s.outputSingleScan([0 0 0]);
 
-dph = gradient(filtfilt(ones(N, 1), 1, phData), 1);
-d2ph = gradient(dph);
-
-phMin = min(phData);
-phMax = max(phData);
-phRange = phMax - phMin;
-
-idx = find(phData<phMin+0.1*phRange);
-[~, mLoc] = max(d2ph(idx));
-vMin = V(idx(mLoc));
-phMin = phData(idx(mLoc));
-
-idx = find(phData>phMax-0.1*phRange);
-[~, mLoc] = min(d2ph(idx));
-vMax = V(idx(mLoc));
-phMax = phData(idx(mLoc));
-
-%%
+%% plotting
+global t phd
 figure
-plot(V, phData, 'r', 'LineWidth', 2)
+plot(t, phd, 'b', t, vY, 'r');
 hold on;
-% plot(V, dph, 'c:', 'LineWidth', 1)
-% plot(V, d2ph, 'b')
-plot(vMin, phData(V==vMin), 'oc');
-plot(vMax, phData(V==vMax), 'oc');
-xlim([vMin - 0.1, vMax + 0.1])
-xlabel('Control Voltage [V]');
-ylabel('Laser Intensity [a.u.]');
-title('Laser diode calibration');
-str{1} = sprintf('Laser Max = %4.3f', phMax);
-str{2} = sprintf('Laser Min = %4.3f', phMin);
-str{3} = sprintf('Extinction coeff. = %3.1f', phMax/phMin);
-text(vMin, phMax, str, 'VerticalAlign', 'Cap', 'HorizontalAlign', 'Left');
 
+% cutting out the first 10ms (just in case, 0.5ms shoud be enough)
+validSamples = 0.01*s.Rate:nSamplesPerLoc;
+power = reshape(phd, nSamplesPerLoc, []);
+power = mean(power(validSamples, :));
+power = reshape(power, ny, nx, nRepeats);
+power = median(power, 3);
 
-%% fast modulation tests
-s.outputSingleScan(vMin);
-pause(5);
+powerAtCenter = power(y==0, x==0);
+power = power/powerAtCenter;
 
-%%
-% 40 Hz sinewave
-stimType = 'square'; % one of {'sine', 'square'}
-holdMeanV = false; % do we hold the laser power on mean between the stimulation epochs?
-nPoints = 2;
-iPoint = 1;
-f = 40; % [Hz]
-stimDuration = 1.5; %[sec]
-gapDuration = 2.5;
-nCycles = 5;
-nSamplesGap = gapDuration*s.Rate;
-tt = 0:1/s.Rate:stimDuration;
-cycleDur = 1/nPoints/f;
-cycleCounter = ceil(tt/cycleDur);
-valid = ~mod(cycleCounter-iPoint, nPoints);
-switch stimType
-    case 'sine'
-        stimSignal = (1-cos(2*pi*f*nPoints*tt))/2.*valid;
-    case 'square'
-        stimSignal = valid;
-    otherwise
-        error('stimType unknown');
-end
-stimSignal = stimSignal*(vMax-vMin)+vMin;
-
-if holdMeanV
-    vStart = mean(stimSignal);
-else
-    vStart = vMin;
-end
-vEnd = vStart;
-
-dataOut = [vStart*ones(nSamplesGap, 1); stimSignal(:); vEnd*ones(nSamplesGap, 1)];
-s.queueOutputData(repmat(dataOut, nCycles, 1));
-
-[data, timeStamps] = s.startForeground;
-
-figure
-plot(timeStamps - gapDuration, data(:, 2)-phBias)
-xlabel('Time [sec]');
-ylabel('Laser Intensity [a.u.]');
+figure;
+surf(XX, YY, power);
+xlabel('X-Galvo Voltage [V]');
+ylabel('Y-Galvo Voltage [V]');
+zlabel('Power, normalized to [x,y] = [0,0]');
 
 return
-%%
-s.release;
-s.wait;
-s.delete;
-% clear s;
+
+

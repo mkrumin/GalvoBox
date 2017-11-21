@@ -40,9 +40,9 @@ coords = [coordsML(:), coordsAP(:), ones(numel(locIdxVector), 1)];
 
 % plot(t, laserPower, t, locIdxVector/3, t, coords)
 
-laserWaveform = obj.laserVoltage(laserPower);
 galvoWaveform = coords * obj.mm2pxTf * obj.px2vTf;
 galvoWaveform = galvoWaveform(:, 1:2);
+laserWaveform = obj.laserVoltage(galvoWaveform, laserPower);
 
 stop(obj.hw.s);
 wait(obj.hw.s);
