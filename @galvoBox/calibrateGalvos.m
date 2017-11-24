@@ -6,8 +6,8 @@ obj.parkGalvos;
 
 power = 1; % [mW]
 vLaser  = laserVoltage(obj, [0 0], power); % 1mW
-vRangeX = -1:1;
-vRangeY = -1:1;
+vRangeX = -1.5:0.5:1.5;
+vRangeY = -1:0.5:2;
 [V.x, V.y] = meshgrid(vRangeX, vRangeY);
 pos = struct('x', nan(size(V.x)), 'y', nan(size(V.y)));
 
@@ -16,13 +16,13 @@ nPoints = numel(V.x);
 preview(obj.vid);
 for iPoint = 1:nPoints
     obj.gotoV([V.x(iPoint) V.y(iPoint) vLaser])
-    pause(0.5); % wait until the galvos actually move (might be unnecessary)
+    pause(0.3); % wait until the galvos actually move (might be unnecessary)
     frame = getsnapshot(obj.vid);
     [pos.x(iPoint), pos.y(iPoint)] = findSpot(frame);
     obj.hSpots.XData = pos.x(iPoint);
     obj.hSpots.YData = pos.y(iPoint);
     obj.hSpots.Marker = 'o';
-    pause(0.5);
+    pause(0.2);
     %     [pos.x(iPoint), pos.y(iPoint)] = findSpot(hAxis);
 end
 
