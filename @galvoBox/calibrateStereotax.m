@@ -1,20 +1,75 @@
 function calibrateStereotax(obj)
 
-pause(0.2)
-frame = getsnapshot(obj.vid);
-h = figure;
-imagesc(frame);
-colormap gray;
-axis equal tight;
-set(gca, 'XDir', 'reverse');
-title('Click on Bregma');
-[bregma.x, bregma.y] = ginput(1);
-title('Click on Lambda');
-[lambda.x, lambda.y] = ginput(1);
-title('Click somewhere on the right hemisphere');
-[right.x, right.y] = ginput(1);
-close(h)
+figure(obj.hCameraAxis.Parent)
+obj.hCameraAxis.Parent.Pointer = 'crosshair';
+t = title(obj.hCameraAxis, 'Where is Bregma?');
+t.Visible = 'on';
+gotBregma = false;
+while ~gotBregma
+    w = waitforbuttonpress;
+    if w == 0
+        click = obj.hCameraAxis.CurrentPoint;
+        x = click(1, 1);
+        y = click(1, 2);
+        if prod(sign(obj.hCameraAxis.XLim - x))==-1 && ...
+            prod(sign(obj.hCameraAxis.YLim - y))==-1
+            bregma.x = x;
+            bregma.y = y;
+            gotBregma = true;
+        else
+            continue;
+        end
+    else
+        continue;
+    end
+end
+
+t = title('Where is Lambda?');
+gotLambda = false;
+while ~gotLambda
+    w = waitforbuttonpress;
+    if w == 0
+        click = obj.hCameraAxis.CurrentPoint;
+        x = click(1, 1);
+        y = click(1, 2);
+        if prod(sign(obj.hCameraAxis.XLim - x))==-1 && ...
+            prod(sign(obj.hCameraAxis.YLim - y))==-1
+            lambda.x = x;
+            lambda.y = y;
+            gotLambda = true;
+        else
+            continue;
+        end
+    else
+        continue;
+    end
+end
+
+t = title('Click somewhere on the right hemisphere');
+gotRight = false;
+while ~gotRight
+    w = waitforbuttonpress;
+    if w == 0
+        click = obj.hCameraAxis.CurrentPoint;
+        x = click(1, 1);
+        y = click(1, 2);
+        if prod(sign(obj.hCameraAxis.XLim - x))==-1 && ...
+            prod(sign(obj.hCameraAxis.YLim - y))==-1
+            right.x = x;
+            right.y = y;
+            gotRight = true;
+        else
+            continue;
+        end
+    else
+        continue;
+    end
+end
+
 obj.mm2pxTf = alignToStereo(bregma, lambda, right, obj.mm2pxScaling);
+
+t.Visible = 'off';
+obj.hCameraAxis.Parent.Pointer = 'arrow';
 
 % pxRightPPC = [1.7, -2, 1] * mm2pxTransform;
 % pxLeftPPC = [-1.7, -2, 1] * mm2pxTransform;
@@ -25,7 +80,7 @@ obj.mm2pxTf = alignToStereo(bregma, lambda, right, obj.mm2pxScaling);
 % hSpot.XData = x;
 % hSpot.YData = y;
 % hSpot.Marker = 'o';
-% 
+%
 
 obj.parkGalvos;
 
