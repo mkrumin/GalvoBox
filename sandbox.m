@@ -4,6 +4,7 @@ o = galvoBox;
 %%
 o.calibrateGalvos;
 %%
+o.hideGrid;
 o.calibrateStereotax;
 o.showGrid;
 %%
