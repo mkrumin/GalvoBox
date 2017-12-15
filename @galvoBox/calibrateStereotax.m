@@ -71,6 +71,10 @@ obj.mm2pxTf = alignToStereo(bregma, lambda, right, obj.mm2pxScaling);
 t.Visible = 'off';
 obj.hCameraAxis.Parent.Pointer = 'arrow';
 
+% get a snapshot of the brain
+
+obj.snapshot = getsnapshot(obj.vid);
+
 % pxRightPPC = [1.7, -2, 1] * mm2pxTransform;
 % pxLeftPPC = [-1.7, -2, 1] * mm2pxTransform;
 % vXY_RightPPC = pxRightPPC * px2vTransform;

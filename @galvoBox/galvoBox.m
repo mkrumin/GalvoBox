@@ -20,6 +20,7 @@ classdef galvoBox < handle
         nUDPs
         cameraLog
         nCameraFrames
+        snapshot
     end
     
     properties (Access = 'private')
@@ -43,6 +44,7 @@ classdef galvoBox < handle
             obj.prepareHardware;
             obj.parkingState = [6 6 0];
             obj.openCamera;
+            obj.snapshot = [];
             obj.cleanup = onCleanup({@delete, obj});
         end
         

@@ -17,6 +17,7 @@ zap.cameraFOV = obj.cameraFOV;
 zap.laserLUT = obj.laserLUT;
 zap.UDPLog = obj.UDPLog;
 zap.cameraLog = obj.cameraLog;
+zap.snapshot = obj.snapshot;
 
 if ~exist(folder, 'dir')
     mkdir(folder);
