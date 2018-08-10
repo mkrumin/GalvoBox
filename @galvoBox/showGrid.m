@@ -4,7 +4,7 @@ function showGrid(obj)
 delete(obj.hGrid);
 
 % These coordinates should span the whole FOV (and even more)
-[xx , yy] = meshgrid(-5:5, -8:2);
+[xx , yy] = meshgrid(0, 0);
 coords = [xx(:), yy(:), ones(size(xx(:)))];
 pxGrid = coords * obj.mm2pxTf;
 pxBregma = [0 0 1] * obj.mm2pxTf;
@@ -18,7 +18,7 @@ hTmp = plot(pxBregma(1), pxBregma(2), 'ro', 'MarkerSize', 8);
 obj.hGrid = [obj.hGrid; hTmp];
 
 % add 'minor' grid
-[xx , yy] = meshgrid(-4.5:0.5:4.5, -7.5:0.5:1.5);
+[xx , yy] = meshgrid(-5:5, -6:3);
 coords = [xx(:), yy(:), ones(size(xx(:)))];
 pxGrid = coords * obj.mm2pxTf;
 gridX = reshape(pxGrid(:,1), size(xx));

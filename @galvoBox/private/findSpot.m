@@ -15,9 +15,9 @@ if length(frame)==Inf
 else
     % if input argument is a snapshot 
     % automatic
-    frame = imgaussfilt(double(frame), 3);
+    frame = imgaussfilt(double(frame), 5);
     frame = frame/max(frame(:));
-    p = regionprops(frame>0.8, 'centroid');
+    p = regionprops(frame>0.9, 'centroid');
     x = p.Centroid(1);
     y = p.Centroid(2);
     

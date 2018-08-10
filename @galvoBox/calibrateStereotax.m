@@ -1,6 +1,12 @@
 function calibrateStereotax(obj)
 
 figure(obj.hCameraAxis.Parent)
+% make the image brighter for easier calibration
+currentExposure = get(obj.vid.Source, 'Exposure');
+currentFramerate = get(obj.vid.Source, 'FrameRate');
+set(obj.vid.Source, 'Exposure', -5);
+set(obj.vid.Source, 'FrameRate', '30.0000');
+
 obj.hCameraAxis.Parent.Pointer = 'crosshair';
 t = title(obj.hCameraAxis, 'Where is Bregma?');
 t.Visible = 'on';
@@ -88,4 +94,6 @@ obj.snapshot = getsnapshot(obj.vid);
 
 obj.parkGalvos;
 
-
+% revert back to the older values
+set(obj.vid.Source, 'Exposure', currentExposure);
+set(obj.vid.Source, 'FrameRate', currentFramerate);

@@ -6,8 +6,8 @@ function volts = laserVoltage(o, vGalvo, power)
 
 minP = 0;
 maxP = o.laserLUT.maxPower;
-% correcting for the galvo position
-correction = interp2(o.laserLUT.vX, o.laserLUT.vY, 1./o.laserLUT.pXY, vGalvo(:,1), vGalvo(:,2));
+% correcting for the galvo position (if outside of the calibration range - set to 1)
+correction = interp2(o.laserLUT.vX, o.laserLUT.vY, 1./o.laserLUT.pXY, vGalvo(:,1), vGalvo(:,2), 'linear', 1);
 powerCorrected = power.*correction;
 
 if any(powerCorrected(:)>maxP)

@@ -5,11 +5,11 @@ function prepareHardware(obj)
 fprintf('Initializing the NI hardware..');
 
 adaptorVendor = 'ni';
-galvoDeviceID = 'Dev2';
+galvoDeviceID = 'Dev1';
 xChID = 'ao0';
 yChID = 'ao1';
 sampleRate = 20e3;
-laserDeviceID = 'Dev1';
+laserDeviceID = 'Dev2';
 laserChannelID = 'ao0';
 
 s = daq.createSession(adaptorVendor);
@@ -29,7 +29,7 @@ s.addTriggerConnection('external', 'Dev2/PFI0', 'StartTrigger');
 s.ExternalTriggerTimeout = Inf;
 
 tr = daq.createSession('ni');
-tr.addDigitalChannel('Dev2', 'Port0/Line0', 'OutputOnly');
+tr.addDigitalChannel('Dev1', 'Port0/Line0', 'OutputOnly');
 tr.outputSingleScan(0);
 
 % this is the daq session for the galvos and the laser

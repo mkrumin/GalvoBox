@@ -4,10 +4,12 @@ function calibrateGalvos(obj)
 
 obj.parkGalvos;
 
-power = 1; % [mW]
+power = 0.1; % [mW]
 vLaser  = laserVoltage(obj, [0 0], power); % 1mW
-vRangeX = -1.5:0.75:1.5;
-vRangeY = -0.75:0.75:1.5;
+% vRangeX = -1.5:0.75:1.5;
+% vRangeY = -0.75:0.75:1.5;
+vRangeX = -1:0.5:1;
+vRangeY = -1:0.5:1;
 [V.x, V.y] = meshgrid(vRangeX, vRangeY);
 pos = struct('x', nan(size(V.x)), 'y', nan(size(V.y)));
 
@@ -22,7 +24,7 @@ for iPoint = 1:nPoints
     obj.hSpots.XData = pos.x(iPoint);
     obj.hSpots.YData = pos.y(iPoint);
     obj.hSpots.Marker = 'o';
-    pause(0.1);
+    pause(0.2);
     %     [pos.x(iPoint), pos.y(iPoint)] = findSpot(hAxis);
 end
 

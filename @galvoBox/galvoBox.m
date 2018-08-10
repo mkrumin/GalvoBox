@@ -33,7 +33,8 @@ classdef galvoBox < handle
             obj.iTrial = 0;
             obj.px2vTf = eye(3);
             obj.mm2pxTf = eye(3);
-            obj.cameraFOV = 7.5; % [mm]
+%             obj.cameraFOV = 7.5; % [mm]
+            obj.cameraFOV = 19; % [mm] - 19 for the zoophile rig
             obj.laserLUT = loadLaserLUT;
             obj.UDPLog = struct('timeStamp', [], 'msg', '');
             obj.nUDPs = 0;
